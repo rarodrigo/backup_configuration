@@ -1,0 +1,25 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: OBTAIN LOGIN CREDENTIALS
+    include_vars: secret.yaml
+
+  - name: Fill vars
+    set_fact:
+      provider:
+        host: "{{ ansible_host }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+        auth_pass: "{{ creds['auth_pass'] }}"
+
+  - name: Compare running-config with base file
+    ios_config:
+      diff_against: running
+      provider: "{{ provider }}"
+      src: /home/rodrigo/Documents/ansible/IWAN Project/input/{{ inventory_hostname }}.conf
+    register: test_diff
+
+  - debug: var=test_diff.updates

@@ -1,0 +1,58 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: OBTAIN LOGIN CREDENTIALS
+    include_vars: secret.yaml
+
+  - name: Fill vars
+    set_fact:
+      provider:
+        host: "{{ ansible_host }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+        auth_pass: "{{ creds['auth_pass'] }}"
+
+  - name: Capture running-config
+    ios_command:
+     provider: "{{ provider }}"
+     commands:
+        - show running-config
+    register: running
+
+  - name: Check that file exist
+    stat:
+      path: /home/rodrigo/Documents/ansible/IWAN Project/backup/{{ inventory_hostname }}_running.txt
+    register: result_file
+
+  - name: Save output running-config
+    copy:
+      content: "{{ running.stdout[0] }}"
+      dest: "/home/rodrigo/Documents/ansible/IWAN Project/backup/{{ inventory_hostname }}_running.txt"
+    when: result_file.stat.exists == False
+
+  - name: Compare running-config with intended file
+    ios_config:
+      diff_against: intended
+      provider: "{{ provider }}"
+      intended_config: "{{ lookup('file', '/home/rodrigo/Documents/ansible/IWAN Project/backup/{{ inventory_hostname }}_running.txt') }}"
+    register: test_diff
+
+  - name: Take running-config and sets it to a variable called *before*
+    set_fact: before="{{ test_diff['diff']['before'].split('\n')}}"
+    when: test_diff['diff'] is defined
+
+  - name: This takes the intended_config and sets it to a variable called *after*
+    set_fact: after="{{ test_diff['diff']['after'].split('\n')}}"
+    when: test_diff['diff'] is defined
+
+  - name: Create a line-to-line diff of running-config to intended_config
+    set_fact: difference="{{ after | difference(before) }}"
+    when: test_diff['diff'] is defined
+
+  - name: sanitized output "Lines added to running-config that are not present in intended_config"
+    debug:
+      var: difference
+    when: test_diff['diff'] is defined

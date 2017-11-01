@@ -1,0 +1,39 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: OBTAIN LOGIN CREDENTIALS
+    include_vars: secret.yaml
+
+  - name: Fill vars
+    set_fact:
+      provider:
+        host: "{{ ansible_host }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+        auth_pass: "{{ creds['auth_pass'] }}"
+
+  - name: Compare startup-config with running-config
+    ios_config:
+      diff_against: startup
+      provider: "{{ provider }}"
+    register: test_diff
+
+  - name: Take startup-config and sets it to a variable called *before*
+    set_fact: before="{{ test_diff['diff']['before'].split('\n')}}"
+    when: test_diff['diff'] is defined
+
+  - name: This takes the running_config and sets it to a variable called *after*
+    set_fact: after="{{ test_diff['diff']['after'].split('\n')}}"
+    when: test_diff['diff'] is defined
+
+  - name: Create a line-to-line diff of running-config to startup_config
+    set_fact: difference="{{ after | difference(before) }}"
+    when: test_diff['diff'] is defined
+
+  - name: sanitized output "Lines added to running-config that are not present in startup_config"
+    debug:
+      var: difference
+    when: test_diff['diff'] is defined
