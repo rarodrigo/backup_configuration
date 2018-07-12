@@ -52,7 +52,7 @@
     set_fact: difference="{{ after | difference(before) }}"
     when: test_diff['diff'] is defined
 
-  - name: sanitized output "Lines added to running-config that are not present in intended_config"
+  - name: sanitized output "Lines not added to running-config that are present in intended_config"
     debug:
       var: difference
     when: test_diff['diff'] is defined
