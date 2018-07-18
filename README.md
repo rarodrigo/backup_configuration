@@ -9,3 +9,5 @@ We have 3 option to make this diffs:
 - Running Config vs Startup Config: `diff_against: startup`
 - Changed Config vs Running Config: `diff_against: running`
 - Running Config vs Intended Config: `diff_against: intended`
+
+If you have more doubts about this can verify by [BLOG CiscoRedes](https://ciscoredes.com.br/2017/10/23/ansible-validacao-de-configuracoes/).
