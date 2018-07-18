@@ -19,7 +19,7 @@
     ios_config:
       diff_against: running
       provider: "{{ provider }}"
-      src: /home/rodrigo/Documents/ansible/IWAN Project/input/{{ inventory_hostname }}.conf
+      src: /etc/ansible/backup_configuration/input/{{ inventory_hostname }}.conf
     register: test_diff
 
   - debug: var=test_diff.updates
