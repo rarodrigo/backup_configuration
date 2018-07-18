@@ -1,18 +1,20 @@
 [routers-client]
-R1 ansible_host=192.168.15.22
-R2 ansible_host=172.18.0.3
-R3 ansible_host=172.18.0.4
-R4 ansible_host=172.18.0.6
-R5 ansible_host=172.18.0.7
-R6 ansible_host=172.18.0.9
-R7 ansible_host=172.18.0.10
+R1 ansible_host=172.16.30.62
+R2 ansible_host=172.16.30.63
+R3 ansible_host=172.16.30.64
+R4 ansible_host=172.16.30.65
+R5 ansible_host=172.16.30.66
+R6 ansible_host=172.16.30.67
+R7 ansible_host=172.16.30.68
+R8 nsible_host=172.16.30.69
+R9 nsible_host=172.16.30.70
 
 [switches-client]
-SW1 ansible_host=172.18.0.2
-SW2 ansible_host=172.18.0.8
-SW3 ansible_host=172.18.0.12
-SW4 ansible_host=172.18.0.13
+#W1 ansible_host=172.18.0.2
+#W2 ansible_host=172.18.0.8
+#W3 ansible_host=172.18.0.12
+#SW4 ansible_host=172.18.0.13
 
 [iwan-hubs]
-MC1-HUB1 ansible_host=172.18.0.5
-MC2-HUB2 ansible_host=172.18.0.11
+#MC1-HUB1 ansible_host=172.18.0.5
+#MC2-HUB2 ansible_host=172.18.0.11
