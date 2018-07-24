@@ -24,20 +24,20 @@
 
   - name: Check that file exist
     stat:
-      path: /etc/ansible/backup_configuration/backup/{{ inventory_hostname }}_running.txt
+      path: ./backup/{{ inventory_hostname }}_running.txt
     register: result_file
 
   - name: Save output running-config
     copy:
       content: "{{ running.stdout[0] }}"
-      dest: "/etc/ansible/backup_configuration/backup/{{ inventory_hostname }}_running.txt"
+      dest: "./backup/{{ inventory_hostname }}_running.txt"
     when: result_file.stat.exists == False
 
   - name: Compare running-config with intended file
     ios_config:
       diff_against: intended
       provider: "{{ provider }}"
-      intended_config: "{{ lookup('file', '/etc/ansible/backup_configuration/backup/{{ inventory_hostname }}_running.txt') }}"
+      intended_config: "{{ lookup('file', './backup/{{ inventory_hostname }}_running.txt') }}"
     register: test_diff
 
   - name: Take running-config and sets it to a variable called *before*
